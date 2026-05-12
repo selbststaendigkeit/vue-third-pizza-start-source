@@ -1,22 +1,17 @@
 <template>
-  <div class="main__wrapper">
-    <div class="main__header">
-      <img src="@/assets/img/logo.svg" width="300" height="47" alt="V!U!E! Pizza" />
-    </div>
-    <h1>Добро пожаловать!</h1>
-    <p>
-      Это проект V!U!E! Pizza для обучения на профессиональном онлайн‑курсе<br />
-      <b>«Vue.js для опытных разработчиков».</b>
-    </p>
-  </div>
+  <app-layout>
+    <home-view/>
+  </app-layout>
 </template>
 
 <style lang="scss">
 @import "@/assets/scss/app.scss";
+
 body {
   justify-content: center;
   align-items: center;
 }
+
 .main__wrapper {
   padding-bottom: 30px;
 
@@ -60,3 +55,8 @@ body {
 }
 
 </style>
+
+<script setup lang="ts">
+import {AppLayout} from "./layouts";
+import {HomeView} from "./views";
+</script>
