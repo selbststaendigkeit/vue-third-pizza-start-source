@@ -1,34 +1,20 @@
 <script setup>
-import doughSizes from '../common/data/doughSizes.js';
-import pizzaSizes from '../common/data/sizes.js';
-import sauces from '../common/data/sauces.js';
-import ingredients from '../common/data/ingredients.js';
-import diameters from '../mocks/sizes.json';
-import rawDough from '../mocks/dough.json';
-import rawSauces from '../mocks/sauces.json';
-import rawIngredients from '../mocks/ingredients.json';
+import diameters from '@/mocks/sizes.json';
+import rawDough from '@/mocks/dough.json';
+import rawSauces from '@/mocks/sauces.json';
+import rawIngredients from '@/mocks/ingredients.json';
+import {
+  normalizeIngredients,
+  normalizeSauces,
+  normalizeDiameters,
+  normalizeDough
+} from '@/common/helpers/normalize.js';
 
-const normalizedDough = rawDough.map((rawDough) => {
-  rawDough.doughSize = doughSizes[rawDough.id];
-  return rawDough;
-});
-const normalizedDiameters = diameters.map((diameter) => {
-  diameter.alias = pizzaSizes[diameter.id];
+const normalizedDough = normalizeDough(rawDough);
+const normalizedDiameters = normalizeDiameters(diameters);
+const normalizedSauces = normalizeSauces(rawSauces);
+const normalizedIngredients = normalizeIngredients(rawIngredients);
 
-  return diameter;
-});
-const normalizedSauces = rawSauces.map((sauce) => {
-  sauce.alias = sauces[sauce.id];
-
-  return sauce;
-});
-const normalizedIngredients = rawIngredients.map((ingredient) => {
-  ingredient.alias = ingredients[ingredient.id];
-
-  return ingredient;
-});
-
-console.log(normalizedDiameters);
 </script>
 
 <template>
@@ -106,8 +92,9 @@ console.log(normalizedDiameters);
                   <li v-for="{id, alias, name} in normalizedIngredients"
                       :key="id"
                       class="ingredients__item">
-                    <span :class="`filling--${alias}`"
-                          class="filling">{{ name }}</span>
+                    <div :class="`filling--${alias}`"
+                         class="filling">{{ name }}
+                    </div>
 
                     <div class="counter counter--orange ingredients__counter">
                       <button type="button" class="counter__button counter__button--minus" disabled>
