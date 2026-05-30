@@ -1,3 +1,9 @@
+<script setup lang="ts">
+import {AppLayout} from "./layouts";
+import {HomeView} from "./views";
+</script>
+
+
 <template>
   <app-layout>
     <home-view/>
@@ -56,7 +62,3 @@ body {
 
 </style>
 
-<script setup lang="ts">
-import {AppLayout} from "./layouts";
-import {HomeView} from "./views";
-</script>
