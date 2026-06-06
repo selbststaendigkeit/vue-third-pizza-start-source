@@ -5,9 +5,11 @@ import {HomeView} from "./views";
 
 
 <template>
+
   <app-layout>
     <home-view/>
   </app-layout>
+
 </template>
 
 <style lang="scss">

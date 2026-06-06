@@ -9,9 +9,10 @@ import {
   normalizeDiameters,
   normalizeDough
 } from '@/common/helpers/normalize.js';
-import {ref} from 'vue';
+import {computed, ref} from 'vue';
 import AppCounter from '../common/components/AppCounter.vue';
 import {INITIAL_INGREDIENT_AMOUNT} from '../common/constants.js';
+import ConstructorDough from '../modules/constructor/ConstructorDough.vue';
 
 const normalizedDough = normalizeDough(rawDough);
 const normalizedDiameters = normalizeDiameters(diameters);
@@ -77,11 +78,18 @@ const pizzaState = ref({
     },
   }
 });
+const doughId = computed({
+  get() {
+    return pizzaState.value.dough?.id;
+  },
+  set(updatedId) {
+    pizzaState.value.dough.id = updatedId;
+  }
+});
 
 const handleIngredientChange = ({ingredient, updatedValue}) => {
   pizzaState.value.ingredients[ingredient].count = updatedValue;
 };
-
 </script>
 
 <template>
@@ -92,25 +100,10 @@ const handleIngredientChange = ({ingredient, updatedValue}) => {
         <h1 class="title title--big">Конструктор пиццы</h1>
 
         <div class="content__dough">
-          <div class="sheet">
-            <h2 class="title title--small sheet__title">Выберите тесто</h2>
-
-            <div class="sheet__content dough">
-              <label v-for="dough in normalizedDough"
-                     :key="dough.id"
-                     :class="`dough__input--${dough.doughSize}`"
-                     class="dough__input">
-                <input type="radio"
-                       name="dough"
-                       :value="dough.doughSize"
-                       class="visually-hidden"
-                       :checked="dough.id === 1">
-                <b>{{ dough.name }}</b>
-                <span>{{ dough.description }}</span>
-              </label>
-            </div>
-
-          </div>
+          <constructor-dough
+              :doughTypes="normalizedDough"
+              v-model:chosenDoughId="doughId"
+          />
         </div>
 
         <div class="content__diameter">
@@ -992,6 +985,4 @@ const handleIngredientChange = ({ingredient, updatedValue}) => {
     }
   }
 }
-
-
 </style>
