@@ -1,49 +1,48 @@
 <script setup>
+import {ref} from 'vue';
 
 const props = defineProps({
-  doughTypes: {
+  diameters: {
     type: Array,
     required: true,
     validator: (value) => value.length
   },
-  chosenDoughId: {
+  currentDiameter: {
     type: Number,
-    default: 1,
+    default: 1
   }
 });
 
 const emits = defineEmits([
-  'update:chosenDoughId'
-])
+  'update:currentDiameter'
+]);
 
-const onDoughInputChange = (evt) => {
-  const chosenDoughId = Number(evt.target.value);
+const onDiameterChange = (evt) => {
+  const updatedValue = Number(evt.target.value);
 
-  emits('update:chosenDoughId', chosenDoughId);
+  emits('update:currentDiameter', updatedValue);
 };
 
 </script>
 
 <template>
   <div class="sheet">
-    <h2 class="title title--small sheet__title">Выберите тесто</h2>
+    <h2 class="title title--small sheet__title">Выберите размер</h2>
 
-    <div class="sheet__content dough">
-      <label v-for="dough in doughTypes"
-             :key="dough.id"
-             :class="`dough__input--${dough.doughSize}`"
-             class="dough__input">
+    <div class="sheet__content diameter">
+      <label v-for="{id, alias, name} in diameters"
+             :key="id"
+             :class="`diameter__input--${alias}`"
+             class="diameter__input">
         <input type="radio"
-               name="dough"
-               :value="dough.id"
+               name="diameter"
+               :value="id"
+               :checked="id === 1"
                class="visually-hidden"
-               :checked="dough.id === 1"
-               @change="onDoughInputChange">
-        <b>{{ dough.name }}</b>
-        <span>{{ dough.description }}</span>
+               @change="onDiameterChange">
+        <span>{{ name }}</span>
       </label>
     </div>
-
   </div>
 </template>
 
@@ -92,20 +91,23 @@ const onDoughInputChange = (evt) => {
   border-top: 1px solid rgba($green-500, 0.1);
 }
 
-.dough__input {
-  position: relative;
-
-  margin-right: 8%;
+.diameter__input {
+  margin-right: 8.7%;
   margin-bottom: 20px;
-  padding-left: 50px;
+  padding-top: 7px;
+  padding-bottom: 6px;
 
   cursor: pointer;
 
-  b {
+  span {
     @include r-s16-h19;
 
+    position: relative;
+
+    padding-left: 46px;
+
     &::before {
-      @include p_center-v;
+      @include p_center_v;
 
       width: 36px;
       height: 36px;
@@ -114,42 +116,43 @@ const onDoughInputChange = (evt) => {
       transition: 0.3s;
 
       border-radius: 50%;
+      background-color: $green-100;
+      background-image: url("@/assets/img/diameter.svg");
       background-repeat: no-repeat;
       background-position: center;
-      background-size: cover;
     }
   }
 
-  span {
-    @include l-s11-h13;
-
-    display: block;
+  &:nth-child(3n) {
+    margin-right: 0;
   }
 
-  &--light {
-    b {
-      &::before {
-        background-image: url("@/assets/img/dough-light.svg");
-      }
+  &--small {
+    span::before {
+      background-size: 18px;
     }
   }
 
-  &--large {
-    b {
-      &::before {
-        background-image: url("@/assets/img/dough-large.svg");
-      }
+  &--normal {
+    span::before {
+      background-size: 29px;
+    }
+  }
+
+  &--big {
+    span::before {
+      background-size: 100%;
     }
   }
 
   &:hover {
-    b::before {
+    span::before {
       box-shadow: $shadow-regular;
     }
   }
 
   input {
-    &:checked + b::before {
+    &:checked + span::before {
       box-shadow: $shadow-large;
     }
   }

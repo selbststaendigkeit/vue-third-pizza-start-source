@@ -1,7 +1,7 @@
 import doughSizes from '@/common/data/doughSizes.js';
 import pizzaSizes from '@/common/data/sizes.js';
 import sauces from '@/common/data/sauces.js';
-import ingredients from '@/common/data/ingredients.js';
+import fillings from '@/common/data/ingredients.js';
 
 export const normalizeDough = (rawDough) => {
     return rawDough.map((dough) => {
@@ -30,11 +30,11 @@ export const normalizeSauces = (rawSauces) => {
     })
 };
 
-export const normalizeIngredients = (rawIngredients) => {
-    return rawIngredients.map((rawIngredient) => {
+export const normalizeFillings = (rawFillings) => {
+    return rawFillings.map((filling) => {
         return {
-            ...rawIngredient,
-            alias: ingredients[rawIngredient.id]
+            ...filling,
+            alias: fillings[filling.id]
         }
     })
 };

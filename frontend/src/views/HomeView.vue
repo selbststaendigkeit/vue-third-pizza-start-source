@@ -2,22 +2,24 @@
 import diameters from '@/mocks/sizes.json';
 import rawDough from '@/mocks/dough.json';
 import rawSauces from '@/mocks/sauces.json';
-import rawIngredients from '@/mocks/ingredients.json';
+import rawFillings from '@/mocks/ingredients.json';
 import {
-  normalizeIngredients,
+  normalizeFillings,
   normalizeSauces,
   normalizeDiameters,
   normalizeDough
 } from '@/common/helpers/normalize.js';
 import {computed, ref} from 'vue';
 import AppCounter from '../common/components/AppCounter.vue';
-import {INITIAL_INGREDIENT_AMOUNT} from '../common/constants.js';
+import {INITIAL_FILLING_AMOUNT} from '../common/constants.js';
 import ConstructorDough from '../modules/constructor/ConstructorDough.vue';
+import ConstructorDiameter from '../modules/constructor/ConstructorDiameter.vue';
+import ConstructorIngredients from '../modules/constructor/ConstructorIngredients.vue';
 
 const normalizedDough = normalizeDough(rawDough);
 const normalizedDiameters = normalizeDiameters(diameters);
 const normalizedSauces = normalizeSauces(rawSauces);
-const normalizedIngredients = normalizeIngredients(rawIngredients);
+const normalizedFillings = normalizeFillings(rawFillings);
 
 const pizzaState = ref({
   name: '',
@@ -30,51 +32,51 @@ const pizzaState = ref({
   sauce: {
     id: 1
   },
-  ingredients: {
+  fillings: {
     mushrooms: {
-      count: INITIAL_INGREDIENT_AMOUNT
+      count: INITIAL_FILLING_AMOUNT
     },
     cheddar: {
-      count: INITIAL_INGREDIENT_AMOUNT
+      count: INITIAL_FILLING_AMOUNT
     },
     salami: {
-      count: INITIAL_INGREDIENT_AMOUNT
+      count: INITIAL_FILLING_AMOUNT
     },
     ham: {
-      count: INITIAL_INGREDIENT_AMOUNT
+      count: INITIAL_FILLING_AMOUNT
     },
     ananas: {
-      count: INITIAL_INGREDIENT_AMOUNT
+      count: INITIAL_FILLING_AMOUNT
     },
     bacon: {
-      count: INITIAL_INGREDIENT_AMOUNT
+      count: INITIAL_FILLING_AMOUNT
     },
     onion: {
-      count: INITIAL_INGREDIENT_AMOUNT
+      count: INITIAL_FILLING_AMOUNT
     },
     chile: {
-      count: INITIAL_INGREDIENT_AMOUNT
+      count: INITIAL_FILLING_AMOUNT
     },
     jalapeno: {
-      count: INITIAL_INGREDIENT_AMOUNT
+      count: INITIAL_FILLING_AMOUNT
     },
     olives: {
-      count: INITIAL_INGREDIENT_AMOUNT
+      count: INITIAL_FILLING_AMOUNT
     },
     tomatoes: {
-      count: INITIAL_INGREDIENT_AMOUNT
+      count: INITIAL_FILLING_AMOUNT
     },
     salmon: {
-      count: INITIAL_INGREDIENT_AMOUNT
+      count: INITIAL_FILLING_AMOUNT
     },
     mozzarella: {
-      count: INITIAL_INGREDIENT_AMOUNT
+      count: INITIAL_FILLING_AMOUNT
     },
     parmesan: {
-      count: INITIAL_INGREDIENT_AMOUNT
+      count: INITIAL_FILLING_AMOUNT
     },
     blue_cheese: {
-      count: INITIAL_INGREDIENT_AMOUNT
+      count: INITIAL_FILLING_AMOUNT
     },
   }
 });
@@ -86,9 +88,33 @@ const doughId = computed({
     pizzaState.value.dough.id = updatedId;
   }
 });
+const sizeId = computed({
+  get() {
+    return pizzaState.value.size?.id
+  },
+  set(updatedValue) {
+    pizzaState.value.size.id = updatedValue;
+  }
+});
+const stateSauce = computed({
+  get() {
+    return Number(pizzaState.value.sauce?.id);
+  },
+  set(updatedValue) {
+    pizzaState.value.sauce.id = updatedValue;
+  }
+});
+const stateFillings = computed({
+  get() {
+    return pizzaState.value.fillings;
+  },
+  set(updatedFilling) {
+    pizzaState.value.fillings[updatedFilling.filling].count = updatedFilling.updatedValue;
+  }
+})
 
-const handleIngredientChange = ({ingredient, updatedValue}) => {
-  pizzaState.value.ingredients[ingredient].count = updatedValue;
+const handleFillingChange = ({filling, updatedValue}) => {
+  pizzaState.value.fillings[filling].count = updatedValue;
 };
 </script>
 
@@ -107,68 +133,20 @@ const handleIngredientChange = ({ingredient, updatedValue}) => {
         </div>
 
         <div class="content__diameter">
-          <div class="sheet">
-            <h2 class="title title--small sheet__title">Выберите размер</h2>
-
-            <div class="sheet__content diameter">
-              <label v-for="{id, alias, name} in normalizedDiameters"
-                     :key="id"
-                     :class="`diameter__input--${alias}`"
-                     class="diameter__input">
-                <input type="radio"
-                       name="diameter"
-                       :value="alias"
-                       class="visually-hidden">
-                <span>{{ name }}</span>
-              </label>
-            </div>
-          </div>
+          <constructor-diameter
+              :diameters="normalizedDiameters"
+              v-model:currentDiameter="sizeId"
+          />
         </div>
 
         <div class="content__ingredients">
-          <div class="sheet">
-            <h2 class="title title--small sheet__title">Выберите ингредиенты</h2>
 
-            <div class="sheet__content ingredients">
-
-              <div class="ingredients__sauce">
-                <p>Основной соус:</p>
-
-                <label v-for="{id, name, alias} in normalizedSauces"
-                       :key="id"
-                       class="radio ingredients__input">
-                  <input type="radio"
-                         name="sauce"
-                         :value="alias"
-                         :checked="id === 1">
-                  <span>{{ name }}</span>
-                </label>
-              </div>
-
-              <div class="ingredients__filling">
-                <p>Начинка:</p>
-
-                <ul class="ingredients__list">
-                  <li v-for="{id, alias, name} in normalizedIngredients"
-                      :key="id"
-                      class="ingredients__item">
-                    <div :class="`filling--${alias}`"
-                         class="filling">{{ name }}
-                    </div>
-
-                    <app-counter
-                        :counterName="alias"
-                        :initialValue="pizzaState.ingredients[alias].count"
-                        @onCounterChange="handleIngredientChange"
-                    />
-
-                  </li>
-                </ul>
-
-              </div>
-
-            </div>
-          </div>
+          <constructor-ingredients
+              :fillings="normalizedFillings"
+              :sauces="normalizedSauces"
+              v-model:chosenSauceId="stateSauce"
+              v-model:chosenFillings="stateFillings"
+          />
         </div>
 
         <div class="content__pizza">

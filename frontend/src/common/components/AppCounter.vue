@@ -44,7 +44,7 @@ const decrement = () => {
 
 watch(count, (newValue) => {
   emits('onCounterChange', {
-    ingredient: props.counterName,
+    filling: props.counterName,
     updatedValue: newValue
   });
 });
