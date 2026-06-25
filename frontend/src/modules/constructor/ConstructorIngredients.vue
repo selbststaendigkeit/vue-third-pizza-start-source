@@ -76,7 +76,6 @@ const handleFillingChange = (newValue) => {
                 :initialValue="fillings[alias]?.count"
                 @onCounterChange="handleFillingChange"
             />
-
           </li>
         </ul>
 

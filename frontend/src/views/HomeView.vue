@@ -112,10 +112,6 @@ const stateFillings = computed({
     pizzaState.value.fillings[updatedFilling.filling].count = updatedFilling.updatedValue;
   }
 })
-
-const handleFillingChange = ({filling, updatedValue}) => {
-  pizzaState.value.fillings[filling].count = updatedValue;
-};
 </script>
 
 <template>
