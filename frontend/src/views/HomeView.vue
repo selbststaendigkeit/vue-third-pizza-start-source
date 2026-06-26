@@ -10,11 +10,11 @@ import {
   normalizeDough
 } from '@/common/helpers/normalize.js';
 import {computed, ref} from 'vue';
-import AppCounter from '../common/components/AppCounter.vue';
-import {INITIAL_FILLING_AMOUNT} from '../common/constants.js';
-import ConstructorDough from '../modules/constructor/ConstructorDough.vue';
-import ConstructorDiameter from '../modules/constructor/ConstructorDiameter.vue';
-import ConstructorIngredients from '../modules/constructor/ConstructorIngredients.vue';
+import {INITIAL_FILLING_AMOUNT} from '@/common/constants.js';
+import ConstructorDough from '@/modules/constructor/ConstructorDough.vue';
+import ConstructorDiameter from '@/modules/constructor/ConstructorDiameter.vue';
+import ConstructorIngredients from '@/modules/constructor/ConstructorIngredients.vue';
+import ConstructorPizza from '@/modules/constructor/ConstructorPizza.vue';
 
 const normalizedDough = normalizeDough(rawDough);
 const normalizedDiameters = normalizeDiameters(diameters);
@@ -101,7 +101,7 @@ const stateSauce = computed({
     return Number(pizzaState.value.sauce?.id);
   },
   set(updatedValue) {
-    pizzaState.value.sauce.id = updatedValue;
+    pizzaState.value.sauce.id = Number(updatedValue);
   }
 });
 const stateFillings = computed({
@@ -136,7 +136,6 @@ const stateFillings = computed({
         </div>
 
         <div class="content__ingredients">
-
           <constructor-ingredients
               :fillings="normalizedFillings"
               :sauces="normalizedSauces"
@@ -146,25 +145,8 @@ const stateFillings = computed({
         </div>
 
         <div class="content__pizza">
-          <label class="input">
-            <span class="visually-hidden">Название пиццы</span>
-            <input type="text" name="pizza_name" placeholder="Введите название пиццы">
-          </label>
-
-          <div class="content__constructor">
-            <div class="pizza pizza--foundation--big-tomato">
-              <div class="pizza__wrapper">
-                <div class="pizza__filling pizza__filling--ananas"></div>
-                <div class="pizza__filling pizza__filling--bacon"></div>
-                <div class="pizza__filling pizza__filling--cheddar"></div>
-              </div>
-            </div>
-          </div>
-
-          <div class="content__result">
-            <p>Итого: 0 ₽</p>
-            <button type="button" class="button" disabled>Готовьте!</button>
-          </div>
+          <constructor-pizza
+          />
         </div>
 
       </div>
@@ -520,8 +502,10 @@ const stateFillings = computed({
   background-repeat: no-repeat;
   background-position: center;
   background-size: 100%;
+}
 
-  &--foundation--big-creamy {
+.pizza__foundation {
+  &--big-creamy {
     background-image: url("@/assets/img/foundation/big-creamy.svg");
   }
 

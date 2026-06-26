@@ -1,6 +1,6 @@
 <script setup>
 import {computed, ref, watch} from 'vue';
-import {MIN_INGREDIENT_AMOUNT, MAX_INGREDIENT_AMOUNT} from '../constants.js';
+import {MIN_INGREDIENT_AMOUNT, MAX_INGREDIENT_AMOUNT} from '@/common/constants.js';
 
 const props = defineProps({
   counterName: {

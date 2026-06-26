@@ -1,5 +1,6 @@
 <script setup>
-import AppCounter from '../../common/components/AppCounter.vue';
+import ConstructorSauce from '@/modules/constructor/ConstructorSauce.vue';
+import ConstructorFilling from '@/modules/constructor/ConstructorFilling.vue';
 
 const props = defineProps({
   sauces: {
@@ -27,16 +28,13 @@ const emits = defineEmits([
   'update:chosenFillings'
 ]);
 
-const onSauceChange = (evt) => {
-  const updatedValue = evt.target.value;
-
+const handleSauceChange = (updatedValue) => {
   emits('update:chosenSauceId', updatedValue);
 };
 
 const handleFillingChange = (newValue) => {
   emits('update:chosenFillings', newValue);
 };
-
 </script>
 
 <template>
@@ -44,43 +42,17 @@ const handleFillingChange = (newValue) => {
     <h2 class="title title--small sheet__title">Выберите ингредиенты</h2>
 
     <div class="sheet__content ingredients">
+      <constructor-sauce
+          :sauces="sauces"
+          :chosenSauceId="chosenSauceId"
+          @update:chosenSauceId="handleSauceChange"
+      />
 
-      <div class="ingredients__sauce">
-        <p>Основной соус:</p>
-
-        <label v-for="{id, name} in sauces"
-               :key="id"
-               class="radio ingredients__input">
-          <input type="radio"
-                 name="sauce"
-                 :value="id"
-                 :checked="id === 1"
-                 @change="onSauceChange">
-          <span>{{ name }}</span>
-        </label>
-      </div>
-
-      <div class="ingredients__filling">
-        <p>Начинка:</p>
-
-        <ul class="ingredients__list">
-          <li v-for="{id, alias, name} in fillings"
-              :key="id"
-              class="ingredients__item">
-            <div :class="`filling--${alias}`"
-                 class="filling">{{ name }}
-            </div>
-
-            <app-counter
-                :counterName="alias"
-                :initialValue="fillings[alias]?.count"
-                @onCounterChange="handleFillingChange"
-            />
-          </li>
-        </ul>
-
-      </div>
-
+      <constructor-filling
+          :fillings="fillings"
+          :chosenFillings="chosenFillings"
+          @update:chosenFillings="handleFillingChange"
+      />
     </div>
   </div>
 </template>
