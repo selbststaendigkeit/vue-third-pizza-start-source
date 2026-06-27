@@ -1,5 +1,6 @@
 <script setup>
 import AppCounter from '@/common/components/AppCounter.vue';
+import AppDrag from '@/common/components/AppDrag.vue';
 
 const props = defineProps({
   fillings: {
@@ -12,15 +13,6 @@ const props = defineProps({
     required: true
   }
 })
-
-const emits = defineEmits([
-  'update:chosenFillings'
-]);
-
-const onFillingChange = (changedFilling) => {
-  emits('update:chosenFillings', changedFilling);
-};
-
 </script>
 
 <template>
@@ -28,17 +20,18 @@ const onFillingChange = (changedFilling) => {
     <p>Начинка:</p>
 
     <ul class="ingredients__list">
-      <li v-for="{id, alias, name} in props.fillings"
-          :key="id"
+      <li v-for="fillingData in props.fillings"
+          :key="fillingData.id"
           class="ingredients__item">
-        <div :class="`filling--${alias}`"
-             class="filling">{{ name }}
-        </div>
+        <app-drag :transferData="fillingData">
+          <div :class="`filling--${fillingData.alias}`"
+               class="filling">{{ fillingData.name }}
+          </div>
+        </app-drag>
 
         <app-counter
-            :counterName="alias"
-            :initialValue="fillings[alias]?.count"
-            @onCounterChange="onFillingChange"
+            :counterName="fillingData.alias"
+            v-model:initialValue="chosenFillings[fillingData.alias].count"
         />
       </li>
     </ul>

@@ -3,13 +3,28 @@ import pizzaSizes from '@/common/data/sizes.js';
 import sauces from '@/common/data/sauces.js';
 import fillings from '@/common/data/ingredients.js';
 
+export const getConstructorDoughName = (doughItem) => {
+    switch (doughItem.doughSize) {
+        case 'light':
+            doughItem.constructorName = 'small';
+            break;
+        case 'large':
+            doughItem.constructorName = 'big';
+            break;
+    }
+};
+
 export const normalizeDough = (rawDough) => {
     return rawDough.map((dough) => {
-        return {
+        const normalizedDough = {
             ...dough,
             doughSize: doughSizes[dough.id]
-        }
-    })
+        };
+
+        getConstructorDoughName(normalizedDough);
+
+        return normalizedDough;
+    });
 };
 
 export const normalizeDiameters = (rawDiameters) => {
@@ -37,4 +52,23 @@ export const normalizeFillings = (rawFillings) => {
             alias: fillings[filling.id]
         }
     })
+};
+
+export const normalizeConstructorFillings = (initialFillings) => {
+    const chosenFillingsList = [];
+
+    for (let [key, value] of Object.entries(initialFillings)) {
+        if (value.count) {
+            const isDouble = value.count === 2;
+            const isTriple = value.count === 3;
+
+            chosenFillingsList.push({
+                name: key,
+                isDouble: isDouble,
+                isTriple: isTriple
+            });
+        }
+    }
+
+    return chosenFillingsList;
 };

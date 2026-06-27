@@ -10,7 +10,7 @@ import {
   normalizeDough
 } from '@/common/helpers/normalize.js';
 import {computed, ref} from 'vue';
-import {INITIAL_FILLING_AMOUNT} from '@/common/constants.js';
+import {INITIAL_FILLING_AMOUNT, INITIAL_PIZZA_COST} from '@/common/constants.js';
 import ConstructorDough from '@/modules/constructor/ConstructorDough.vue';
 import ConstructorDiameter from '@/modules/constructor/ConstructorDiameter.vue';
 import ConstructorIngredients from '@/modules/constructor/ConstructorIngredients.vue';
@@ -78,9 +78,10 @@ const pizzaState = ref({
     blue_cheese: {
       count: INITIAL_FILLING_AMOUNT
     },
-  }
+  },
+  cost: INITIAL_PIZZA_COST
 });
-const doughId = computed({
+const stateDoughId = computed({
   get() {
     return pizzaState.value.dough?.id;
   },
@@ -88,7 +89,7 @@ const doughId = computed({
     pizzaState.value.dough.id = updatedId;
   }
 });
-const sizeId = computed({
+const stateSizeId = computed({
   get() {
     return pizzaState.value.size?.id
   },
@@ -96,7 +97,7 @@ const sizeId = computed({
     pizzaState.value.size.id = updatedValue;
   }
 });
-const stateSauce = computed({
+const stateSauceId = computed({
   get() {
     return Number(pizzaState.value.sauce?.id);
   },
@@ -111,7 +112,24 @@ const stateFillings = computed({
   set(updatedFilling) {
     pizzaState.value.fillings[updatedFilling.filling].count = updatedFilling.updatedValue;
   }
-})
+});
+const statePizzaName = computed({
+  get() {
+    return pizzaState.value.name;
+  },
+  set(updatedName) {
+    pizzaState.value.name = String(updatedName);
+  }
+});
+const statePizzaCost = computed({
+  get() {
+    return pizzaState.value.cost;
+  },
+  set(updatedCost) {
+    pizzaState.value.cost = Number(updatedCost);
+  }
+});
+
 </script>
 
 <template>
@@ -124,14 +142,14 @@ const stateFillings = computed({
         <div class="content__dough">
           <constructor-dough
               :doughTypes="normalizedDough"
-              v-model:chosenDoughId="doughId"
+              v-model:chosenDoughId="stateDoughId"
           />
         </div>
 
         <div class="content__diameter">
           <constructor-diameter
               :diameters="normalizedDiameters"
-              v-model:currentDiameter="sizeId"
+              v-model:currentDiameter="stateSizeId"
           />
         </div>
 
@@ -139,13 +157,21 @@ const stateFillings = computed({
           <constructor-ingredients
               :fillings="normalizedFillings"
               :sauces="normalizedSauces"
-              v-model:chosenSauceId="stateSauce"
+              v-model:chosenSauceId="stateSauceId"
               v-model:chosenFillings="stateFillings"
           />
         </div>
 
         <div class="content__pizza">
           <constructor-pizza
+              :dough="normalizedDough"
+              :sauces="normalizedSauces"
+              :fillings="normalizedFillings"
+              :cost="statePizzaCost"
+              v-model:chosenPizzaName="statePizzaName"
+              v-model:chosenDoughId="stateDoughId"
+              v-model:chosenSauceId="stateSauceId"
+              v-model:stateFillings="stateFillings"
           />
         </div>
 

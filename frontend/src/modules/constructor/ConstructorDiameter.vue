@@ -35,7 +35,7 @@ const onDiameterChange = (evt) => {
         <input type="radio"
                name="diameter"
                :value="id"
-               :checked="id === 1"
+               :checked="id === currentDiameter"
                class="visually-hidden"
                @change="onDiameterChange">
         <span>{{ name }}</span>

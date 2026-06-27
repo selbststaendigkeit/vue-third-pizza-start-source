@@ -1,5 +1,81 @@
 <script setup>
+import AppDrop from '@/common/components/AppDrop.vue';
+import {computed} from 'vue';
+import {normalizeConstructorFillings} from '@/common/helpers/normalize.js';
+import {MAX_INGREDIENT_AMOUNT} from '@/common/constants.js';
 
+const props = defineProps({
+  dough: {
+    type: Array,
+    required: true,
+  },
+  sauces: {
+    type: Array,
+    required: true,
+  },
+  fillings: {
+    type: Array,
+    required: true,
+  },
+  cost: {
+    type: Number,
+    default: 0,
+    required: true,
+    validator: (value) => value >= 0
+  },
+  chosenPizzaName: {
+    type: String,
+    default: '',
+    required: true,
+  },
+  chosenDoughId: {
+    type: Number,
+    required: true,
+  },
+  chosenSauceId: {
+    type: Number,
+    required: true,
+  },
+  stateFillings: {
+    type: Object,
+    required: true
+  },
+});
+
+const emits = defineEmits([
+  'update:chosenPizzaName',
+  'update:stateFillings',
+]);
+
+const chosenFillingsList = computed(() => {
+  return normalizeConstructorFillings(props.stateFillings);
+});
+const chosenDoughName = computed(() => {
+  return props.dough.find((doughItem) => doughItem.id === props.chosenDoughId)?.constructorName;
+});
+const chosenSauceName = computed(() => {
+  return props.sauces.find((sauceItem) => sauceItem.id === props.chosenSauceId)?.alias;
+});
+
+
+const handleFillingDrop = (transferData) => {
+  const fillingAlias = transferData.alias;
+  const currentAmount = props.stateFillings[fillingAlias].count;
+
+  if (currentAmount < MAX_INGREDIENT_AMOUNT) {
+    const updatedFilling = {
+      filling: fillingAlias,
+      updatedValue: currentAmount + 1,
+    };
+    emits('update:stateFillings', updatedFilling);
+  }
+};
+
+const handleNameInput = (evt) => {
+  const updatedValue = evt.target.value;
+
+  emits('update:chosenPizzaName', updatedValue);
+};
 </script>
 
 <template>
@@ -8,24 +84,33 @@
     <input type="text"
            name="pizza_name"
            placeholder="Введите название пиццы"
-           required>
+           required
+           :value="chosenPizzaName"
+           @input="handleNameInput">
   </label>
 
-  <div class="content__constructor">
-    <div class="pizza pizza__foundation--big-tomato">
-      <div class="pizza__wrapper">
-        <div class="pizza__filling pizza__filling--ananas"></div>
-        <div class="pizza__filling pizza__filling--bacon"></div>
-        <div class="pizza__filling pizza__filling--cheddar"></div>
+  <app-drop @drop="handleFillingDrop">
+    <div class="content__constructor">
+      <div :class="`pizza pizza__foundation--${ chosenDoughName }-${ chosenSauceName }`">
+        <div class="pizza__wrapper">
+          <div v-for="{name, isDouble, isTriple} in chosenFillingsList"
+               :key="name"
+               :class="`pizza__filling
+                       pizza__filling--${name}
+                       ${isDouble ? ' pizza__filling--second' : ''}
+                       ${isTriple ? ' pizza__filling--third' : ''}`">
+          </div>
+        </div>
       </div>
     </div>
-  </div>
+  </app-drop>
 
   <div class="content__result">
-    <p>Итого: 0 ₽</p>
+    <p>Итого: {{ cost }} ₽</p>
     <button type="button"
             class="button"
-            disabled>Готовьте!</button>
+            disabled>Готовьте!
+    </button>
   </div>
 </template>
 
@@ -382,8 +467,8 @@
   }
 
   &--salami,
-  &---salami.pizza__filling--second::before,
-  &---salami.pizza__filling--third::after {
+  &--salami.pizza__filling--second::before,
+  &--salami.pizza__filling--third::after {
     background-image: url("@/assets/img/filling-big/salami.svg");
   }
 

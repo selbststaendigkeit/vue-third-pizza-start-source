@@ -20,34 +20,26 @@ const props = defineProps({
 });
 
 const emits = defineEmits([
-  'onCounterChange'
+  'update:initialValue'
 ]);
 
-const count = ref(props.initialValue);
 const isAddButtonDisabled = computed(() => {
-  return count.value === MAX_INGREDIENT_AMOUNT;
+  return props.initialValue === MAX_INGREDIENT_AMOUNT;
 });
 const isReduceButtonDisabled = computed(() => {
-  return count.value === MIN_INGREDIENT_AMOUNT;
+  return props.initialValue === MIN_INGREDIENT_AMOUNT;
 });
 
 const increment = () => {
-  if (count.value < MAX_INGREDIENT_AMOUNT) {
-    count.value++;
+  if (props.initialValue < MAX_INGREDIENT_AMOUNT) {
+    emits('update:initialValue', props.initialValue + 1);
   }
 };
 const decrement = () => {
-  if (count.value > MIN_INGREDIENT_AMOUNT) {
-    count.value--;
+  if (props.initialValue > MIN_INGREDIENT_AMOUNT) {
+    emits('update:initialValue', props.initialValue - 1);
   }
 };
-
-watch(count, (newValue) => {
-  emits('onCounterChange', {
-    filling: props.counterName,
-    updatedValue: newValue
-  });
-});
 </script>
 
 <template>
@@ -62,7 +54,7 @@ watch(count, (newValue) => {
     <input type="text"
            class="counter__input"
            :name="counterName"
-           v-model="count"
+           :value="props.initialValue"
            readonly>
     <button type="button"
             :class="isOrange ? 'counter__button--orange' : ''"
