@@ -1,5 +1,5 @@
 <script setup>
-import {computed, ref, watch} from 'vue';
+import {computed} from 'vue';
 import {MIN_INGREDIENT_AMOUNT, MAX_INGREDIENT_AMOUNT} from '@/common/constants.js';
 
 const props = defineProps({
